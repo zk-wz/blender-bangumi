@@ -4,8 +4,10 @@ import re
 import os
 import urllib.request as r
 import time
+from threading import Thread
 
-    
+
+
 #爬取网页
 def get_link(url):
     # url = 'https://bgm.tv/calendar'
@@ -24,17 +26,18 @@ def get_link(url):
         try:
             bangumi_content = requests.get(url, proxies=proxies, headers=headers)
             status = bangumi_content.status_code
+            count += 1
         except:
             count += 1
         
     #访问失败
     if count == max_count:
-        print('访问失败！')
+        # print('访问失败！')
         return False
     
     #访问成功
     else:
-        print('访问成功！')
+        # print('访问成功！')
         return bangumi_content
 
 ## 解析番剧日历信息，返回图片直链列表
@@ -79,37 +82,82 @@ def parse_bangumi_calendar(bangumi_content):
     else:
         return False
 
+
+
+
+
 ## 保存图片
-def downloader(total_list):
+def downloader(total_list,i):
     if total_list != False:
         week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
-        for i in range(0,7):
+
         #获取图片直链列表
-            img_url_list = total_list[1][i]
+        img_url_list = total_list[1][i]
 
         #获取番剧名称列表
-            # bangumi_name_list_cn = total_list[0][i]
+        # bangumi_name_list_cn = total_list[0][i]
 
         #获取图片保存路径
-            img_save_path = os.getcwd()+'\\'+'img'+'\\'+week[i]
+        img_save_path = os.getcwd()+'\\'+'img'+'\\'+week[i]
 
         #创建图片保存路径
-            if not os.path.exists(img_save_path):
-                os.makedirs(img_save_path)
+        if not os.path.exists(img_save_path):
+            os.makedirs(img_save_path)
 
         #保存图片
-            for j in range(0,len(img_url_list)):
-                img = get_link(img_url_list[j])
-                if img != False:
-                    with open(img_save_path+'\\'+str(j)+'.jpg', 'wb') as f:
-                        f.write(img.content)
-                        print('%s.jpg 下载完成！' % str(j))
+        for j in range(0,len(img_url_list)):
+            img = get_link(img_url_list[j])
+            if img != False:
+                with open(img_save_path+'\\'+str(j)+'.jpg', 'wb') as f:
+                    f.write(img.content)
+                    print(str(i),'%s.jpg 下载完成！' % str(j))
+
+        # for i in range(0,7):
+        # #获取图片直链列表
+        #     img_url_list = total_list[1][i]
+
+        # #获取番剧名称列表
+        #     # bangumi_name_list_cn = total_list[0][i]
+
+        # #获取图片保存路径
+        #     img_save_path = os.getcwd()+'\\'+'img'+'\\'+week[i]
+
+        # #创建图片保存路径
+        #     if not os.path.exists(img_save_path):
+        #         os.makedirs(img_save_path)
+
+        # #保存图片
+        #     for j in range(0,len(img_url_list)):
+        #         img = get_link(img_url_list[j])
+        #         if img != False:
+        #             with open(img_save_path+'\\'+str(j)+'.jpg', 'wb') as f:
+        #                 f.write(img.content)
+        #                 print('%s.jpg 下载完成！' % str(j))
     else:
         print('获取图片失败！')
 
 
+def muti_process_get_pic(total_list):
+
+    #多进程下载图片
+    treads = [[], [], [], [], [], [], []]
+    for i in range(7):
+        treads[i] = Thread(target=downloader, args=(total_list,i))
+    for i in treads:
+        i.start()
+    for i in treads:
+        i.join()
+
+
+def spider():
+    bangumi_content = get_link('https://bgm.tv/calendar')
+    total_list = parse_bangumi_calendar(bangumi_content)
+    # downloader(total_list)
+    muti_process_get_pic(total_list)
 
 
 if __name__ == '__main__':
-    downloader(parse_bangumi_calendar(get_link('https://bgm.tv/calendar')))
+    t1=time.time()
+    spider()
+    print('爬取完成！共使用'+str(time.time()-t1)+'秒')
