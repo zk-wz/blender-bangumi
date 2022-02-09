@@ -40,8 +40,12 @@ def get_link(url):
         # print('访问成功！')
         return bangumi_content
 
+
+
+
 ## 解析番剧日历信息，返回图片直链列表
 def parse_bangumi_calendar(bangumi_content):
+
     if bangumi_content !=False:
         week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
         bangumi_content.encoding='utf-8'
@@ -53,16 +57,9 @@ def parse_bangumi_calendar(bangumi_content):
 
         #番剧名称和图片直链爬取，存进列表
         bangumi_name_list_cn = []
-        # bangumi_name_list_jp = []
+        bangumi_name_list_jp = []
         img_url_list = []
         for i in range(0,7):
-            temp=[]
-
-            #中文名称列表解析
-            name_list_cn = re.findall(r'class="nav">[^(<small><em>.*?</em></small>)]*?</a>', date_list[i][0])
-            for j in range(0,len(name_list_cn)):
-                temp.append(name_list_cn[j][12:-4])
-            bangumi_name_list_cn.append(temp)
 
             temp=[]
 
@@ -71,17 +68,63 @@ def parse_bangumi_calendar(bangumi_content):
             for j in range(0,len(img_link_list)):
                 temp.append('https:'+img_link_list[j][17:-3])
             img_url_list.append(temp)
-        
+
+
+            #单独分离出每部番剧的部分，方便分离出名称
+            each_bangumi=re.findall(r'<li.*?</li>', date_list[i][0])
+
+            
+            name_list_cn=[]
+            name_list_jp=[]
+            #若是有中文部分，则将中文名称添加到列表name_list_cn，否则添加空字符串，方便之后分离，日文同理
+            #需要同时抓取日文和中文是因为有些番剧名称只有日文，没有中文
+            for j in range(0,len(each_bangumi)):
+                #中文部分
+                name = re.findall(r'class="nav">[^(<small><em>.*?</em></small>)]*?</a>', each_bangumi[j])
+
+                if name!=[]:
+                    name_list_cn.append(name[0][12:-4])
+                else:
+                    name_list_cn.append(' ')
+
+                #日文部分
+                name = re.findall(r'class="nav"><small><em>.*?</em></small>', each_bangumi[j])
+
+                if name!=[]:
+                    name_list_jp.append(name[0][23:-13])
+                else:
+                    name_list_jp.append(' ')
+
+            temp=[]
+
+            #中文名称列表解析
+            for j in range(0,len(name_list_cn)):
+                temp.append(name_list_cn[j])
+
+            bangumi_name_list_cn.append(temp)
+
+
+            temp=[]
+
+            #日文名称列表解析
+            for j in range(0,len(name_list_jp)):
+                temp.append(name_list_jp[j])
+
+            bangumi_name_list_jp.append(temp)
+
+    
+        #拼接以上列表
         total_list = []
         total_list.append(bangumi_name_list_cn)
+        total_list.append(bangumi_name_list_jp)
         total_list.append(img_url_list)
         
 
         return total_list
 
+
     else:
         return False
-
 
 
 
@@ -93,10 +136,11 @@ def downloader(total_list,i):
 
 
         #获取图片直链列表
-        img_url_list = total_list[1][i]
+        img_url_list = total_list[2][i]
 
         #获取番剧名称列表
-        # bangumi_name_list_cn = total_list[0][i]
+        bangumi_name_list_cn = total_list[0][i]
+        bangumi_name_list_jp = total_list[1][i]
 
         #获取图片保存路径
         img_save_path = os.getcwd()+'\\'+'img'+'\\'+week[i]
@@ -111,7 +155,11 @@ def downloader(total_list,i):
             if img != False:
                 with open(img_save_path+'\\'+str(j)+'.jpg', 'wb') as f:
                     f.write(img.content)
-                    print(str(i),'%s.jpg 下载完成！' % str(j))
+                    if bangumi_name_list_cn[j]!=' ':
+                        bangumi_name=bangumi_name_list_cn[j]
+                    else:
+                        bangumi_name=bangumi_name_list_jp[j]
+                    print('番剧：“%s” 的封面下载完成！' % bangumi_name)
 
         # for i in range(0,7):
         # #获取图片直链列表
@@ -134,13 +182,14 @@ def downloader(total_list,i):
         #             with open(img_save_path+'\\'+str(j)+'.jpg', 'wb') as f:
         #                 f.write(img.content)
         #                 print('%s.jpg 下载完成！' % str(j))
+
     else:
         print('获取图片失败！')
 
 
+#多线程下载图片
 def muti_process_get_pic(total_list):
 
-    #多进程下载图片
     treads = [[], [], [], [], [], [], []]
     for i in range(7):
         treads[i] = Thread(target=downloader, args=(total_list,i))
@@ -150,6 +199,7 @@ def muti_process_get_pic(total_list):
         i.join()
 
 
+#爬虫主函数
 def spider():
     bangumi_content = get_link('https://bgm.tv/calendar')
     total_list = parse_bangumi_calendar(bangumi_content)
@@ -161,3 +211,8 @@ if __name__ == '__main__':
     t1=time.time()
     spider()
     print('爬取完成！共使用'+str(time.time()-t1)+'秒')
+
+
+
+
+
