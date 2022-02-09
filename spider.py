@@ -80,20 +80,20 @@ def parse_bangumi_calendar(bangumi_content):
             #需要同时抓取日文和中文是因为有些番剧名称只有日文，没有中文
             for j in range(0,len(each_bangumi)):
                 #中文部分
-                name = re.findall(r'class="nav">[^(<small><em>.*?</em></small>)]*?</a>', each_bangumi[j])
+                name = re.findall(r'class="nav">[^(<small>.*?</small>)]*?</a>', each_bangumi[j])
 
-                if name!=[]:
+                if len(name)!=0:
                     name_list_cn.append(name[0][12:-4])
                 else:
-                    name_list_cn.append(' ')
+                    name_list_cn.append('')
 
                 #日文部分
                 name = re.findall(r'class="nav"><small><em>.*?</em></small>', each_bangumi[j])
 
-                if name!=[]:
+                if len(name)!=0:
                     name_list_jp.append(name[0][23:-13])
                 else:
-                    name_list_jp.append(' ')
+                    name_list_jp.append('')
 
             temp=[]
 
@@ -126,7 +126,12 @@ def parse_bangumi_calendar(bangumi_content):
     else:
         return False
 
-
+def test(total_list):
+    for i in range(0,7):
+        print(total_list[0][i])
+        # print(total_list[1][i])
+        # print(total_list[2][i])
+        print('\n')
 
 
 ## 保存图片
@@ -155,7 +160,9 @@ def downloader(total_list,i):
             if img != False:
                 with open(img_save_path+'\\'+str(j)+'.jpg', 'wb') as f:
                     f.write(img.content)
-                    if bangumi_name_list_cn[j]!=' ':
+
+
+                    if bangumi_name_list_cn[j]!='':
                         bangumi_name=bangumi_name_list_cn[j]
                     else:
                         bangumi_name=bangumi_name_list_jp[j]
@@ -205,12 +212,14 @@ def spider():
     total_list = parse_bangumi_calendar(bangumi_content)
     # downloader(total_list)
     muti_process_get_pic(total_list)
+    # test(total_list)
 
 
 if __name__ == '__main__':
     t1=time.time()
     spider()
     print('爬取完成！共使用'+str(time.time()-t1)+'秒')
+    
 
 
 
