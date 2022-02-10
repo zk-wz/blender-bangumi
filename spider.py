@@ -7,17 +7,25 @@ import time
 from threading import Thread
 
 
-
-#爬取网页
-def get_link(url):
-    # url = 'https://bgm.tv/calendar'
-    #headers
-    headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36"}
+def get_proxy_():
+    #获取代理
     proxy=r.getproxies() #获取代理
     proxies = {
         "http": proxy['http'],
         "https": proxy['http']
     }
+    return proxies
+
+
+#爬取网页
+def get_link(url):
+
+    # url = 'https://bgm.tv/calendar'
+    #headers
+    headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36"}
+    #获取代理
+    proxies=get_proxy_()
+
     # bangumi_content = requests.get(url, proxies=proxies, headers=headers)
     status = count = 0
     max_count = 5 #最大重试次数
@@ -32,7 +40,7 @@ def get_link(url):
         
     #访问失败
     if count == max_count:
-        # print('访问失败！')
+        print('访问失败！')
         return False
     
     #访问成功
@@ -46,7 +54,7 @@ def get_link(url):
 ## 解析番剧日历信息，返回图片直链列表
 def parse_bangumi_calendar(bangumi_content):
 
-    if bangumi_content !=False:
+    if bangumi_content:
         week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
         bangumi_content.encoding='utf-8'
         txt=repr(bangumi_content.text)
@@ -114,6 +122,7 @@ def parse_bangumi_calendar(bangumi_content):
 
     
         #拼接以上列表
+        #中文名称下标为0，日文名称下标为1，图片直链下标为2
         total_list = []
         total_list.append(bangumi_name_list_cn)
         total_list.append(bangumi_name_list_jp)
@@ -126,17 +135,11 @@ def parse_bangumi_calendar(bangumi_content):
     else:
         return False
 
-def test(total_list):
-    for i in range(0,7):
-        print(total_list[0][i])
-        # print(total_list[1][i])
-        # print(total_list[2][i])
-        print('\n')
 
 
 ## 保存图片
 def downloader(total_list,i):
-    if total_list != False:
+    if total_list:
         week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
 
@@ -156,16 +159,20 @@ def downloader(total_list,i):
 
         #保存图片
         for j in range(0,len(img_url_list)):
+            #获取图片链接
             img = get_link(img_url_list[j])
-            if img != False:
+
+            if img:
+
+                #获取图片名称
+                if bangumi_name_list_cn[j]!='':
+                    bangumi_name=bangumi_name_list_cn[j]
+                else:
+                    bangumi_name=bangumi_name_list_jp[j]
+
                 with open(img_save_path+'\\'+str(j)+'.jpg', 'wb') as f:
+                # with open(img_save_path+'\\'+bangumi_name+'.jpg', 'wb') as f:
                     f.write(img.content)
-
-
-                    if bangumi_name_list_cn[j]!='':
-                        bangumi_name=bangumi_name_list_cn[j]
-                    else:
-                        bangumi_name=bangumi_name_list_jp[j]
                     print('番剧：“%s” 的封面下载完成！' % bangumi_name)
 
         # for i in range(0,7):
@@ -195,30 +202,36 @@ def downloader(total_list,i):
 
 
 #多线程下载图片
-def muti_process_get_pic(total_list):
+def muti_process_get_pic(total_list,tread_num):
 
-    treads = [[], [], [], [], [], [], []]
-    for i in range(7):
-        treads[i] = Thread(target=downloader, args=(total_list,i))
+    treads = []
+    for i in range(tread_num):
+        treads.append(Thread(target=downloader, args=(total_list,i)))
     for i in treads:
         i.start()
     for i in treads:
         i.join()
 
+# def test(total_list):
+#     for i in range(0,7):
+#         print(total_list[0][i])
+#         # print(total_list[1][i])
+#         # print(total_list[2][i])
+#         print('\n')
 
 #爬虫主函数
 def spider():
     bangumi_content = get_link('https://bgm.tv/calendar')
     total_list = parse_bangumi_calendar(bangumi_content)
     # downloader(total_list)
-    muti_process_get_pic(total_list)
+    muti_process_get_pic(total_list,7)
     # test(total_list)
 
 
 if __name__ == '__main__':
-    t1=time.time()
+    t=time.time()
     spider()
-    print('爬取完成！共使用'+str(time.time()-t1)+'秒')
+    print('爬取完成！共使用'+str(time.time()-t)+'秒')
     
 
 
