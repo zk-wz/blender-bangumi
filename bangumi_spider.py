@@ -10,12 +10,15 @@ from threading import Thread
 #获取代理
 def get_proxy_():
     proxy=r.getproxies() #获取代理
-    proxies = {
-        "http": proxy['http'],
-        "https": proxy['http']
-    }
-    return proxies
+    if len(proxy) != 0:
+        proxies = {
+            "http": proxy['http'],
+            "https": proxy['http']
+        }
+        return proxies
 
+    else:
+        return None
 
 #爬取网页
 def get_link(url):
@@ -169,7 +172,7 @@ def downloader(total_list,i):
             os.makedirs(img_save_path)
 
         #保存图片
-        for j in range(0,len(img_url_list)):
+        for j in range(len(img_url_list)):
             #获取图片链接
             img = get_link(img_url_list[j])
 
@@ -213,11 +216,11 @@ def downloader(total_list,i):
 
 
 #多线程下载图片
-def muti_process_get_pic(total_list,tread_num):
+def muti_process_get_pic(total_list,tread_num,target):
 
     treads = []
     for i in range(tread_num):
-        treads.append(Thread(target=downloader, args=(total_list,i)))
+        treads.append(Thread(target=target, args=(total_list,i)))
     for i in treads:
         i.start()
     for i in treads:
@@ -235,7 +238,7 @@ def spider():
     bangumi_content = get_link('https://bgm.tv/calendar')
     total_list = parse_bangumi_calendar(bangumi_content)
     # downloader(total_list)
-    muti_process_get_pic(total_list,7)
+    muti_process_get_pic(total_list,7,downloader)
     # test(total_list)
 
 
