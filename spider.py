@@ -7,8 +7,8 @@ import time
 from threading import Thread
 
 
+#获取代理
 def get_proxy_():
-    #获取代理
     proxy=r.getproxies() #获取代理
     proxies = {
         "http": proxy['http'],
@@ -73,7 +73,7 @@ def parse_bangumi_calendar(bangumi_content):
 
             #图片直链列表解析
             img_link_list = re.findall(r'background:url.*?\)', date_list[i][0])
-            for j in range(0,len(img_link_list)):
+            for j in range(len(img_link_list)):
                 temp.append('https:'+img_link_list[j][17:-3])
             img_url_list.append(temp)
 
@@ -86,7 +86,7 @@ def parse_bangumi_calendar(bangumi_content):
             name_list_jp=[]
             #若是有中文部分，则将中文名称添加到列表name_list_cn，否则添加空字符串，方便之后分离，日文同理
             #需要同时抓取日文和中文是因为有些番剧名称只有日文，没有中文
-            for j in range(0,len(each_bangumi)):
+            for j in range(len(each_bangumi)):
                 #中文部分
                 name = re.findall(r'class="nav">[^(<small>.*?</small>)]*?</a>', each_bangumi[j])
 
@@ -106,7 +106,7 @@ def parse_bangumi_calendar(bangumi_content):
             temp=[]
 
             #中文名称列表解析
-            for j in range(0,len(name_list_cn)):
+            for j in range(len(name_list_cn)):
                 temp.append(name_list_cn[j])
 
             bangumi_name_list_cn.append(temp)
@@ -115,10 +115,14 @@ def parse_bangumi_calendar(bangumi_content):
             temp=[]
 
             #日文名称列表解析
-            for j in range(0,len(name_list_jp)):
+            for j in range(len(name_list_jp)):
                 temp.append(name_list_jp[j])
 
             bangumi_name_list_jp.append(temp)
+
+
+        name_fix(bangumi_name_list_cn)
+        name_fix(bangumi_name_list_jp)
 
     
         #拼接以上列表
@@ -135,6 +139,13 @@ def parse_bangumi_calendar(bangumi_content):
     else:
         return False
 
+#去除名称中的反斜杠
+def name_fix(name_list):
+    for i in range(len(name_list)):
+        for j in range(len(name_list[i])):
+            name_list[i][j] = name_list[i][j].replace('\\','')
+    return name_list
+    
 
 
 ## 保存图片
