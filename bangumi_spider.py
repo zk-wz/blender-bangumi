@@ -5,7 +5,7 @@ import os
 import urllib.request as r
 import time
 from threading import Thread
-
+import pickle
 
 #获取代理
 def get_proxy_():
@@ -19,6 +19,8 @@ def get_proxy_():
 
     else:
         return None
+
+
 
 #爬取网页
 def get_link(url):
@@ -142,6 +144,8 @@ def parse_bangumi_calendar(bangumi_content):
     else:
         return False
 
+
+
 #去除名称中的反斜杠
 def name_fix(name_list):
     for i in range(len(name_list)):
@@ -165,7 +169,8 @@ def downloader(total_list,i):
         bangumi_name_list_jp = total_list[1][i]
 
         #获取图片保存路径
-        img_save_path = os.getcwd()+'\\'+'img'+'\\'+week[i]
+        # img_save_path = os.getcwd()+'\\'+'img'+'\\'+week[i]
+        img_save_path = os.path.dirname(os.path.abspath(__file__)) +'\\'+'img'+'\\'+week[i]
 
         #创建图片保存路径
         if not os.path.exists(img_save_path):
@@ -234,18 +239,30 @@ def muti_process_get_pic(total_list,tread_num,target):
 #         print('\n')
 
 #爬虫主函数
-def spider():
+def bangumi_main():
+    t=time.time()
     bangumi_content = get_link('https://bgm.tv/calendar')
     total_list = parse_bangumi_calendar(bangumi_content)
+
+    #保存番剧信息，优化读取效率
+    path=os.path.dirname(os.path.abspath(__file__))+'\\'+'src'
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(path+'\\'+'bangumi_info',"wb") as f:
+        pickle.dump(total_list,f)
+
+
     # downloader(total_list)
     muti_process_get_pic(total_list,7,downloader)
     # test(total_list)
+    print('爬取完成！耗时：'+str(time.time()-t)+'秒')
 
 
-if __name__ == '__main__':
-    t=time.time()
-    spider()
-    print('爬取完成！共使用'+str(time.time()-t)+'秒')
+# if __name__ == '__main__':
+    # print(os.path.dirname(os.path.abspath(__file__)))
+#     t=time.time()
+#     spider()
+#     print('爬取完成！共使用'+str(time.time()-t)+'秒')
     
 
 
