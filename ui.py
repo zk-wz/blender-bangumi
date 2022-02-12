@@ -1,5 +1,6 @@
 import bpy
-
+import pickle
+import os
 
 class bangumi_n_panel_ui(bpy.types.Panel):
     bl_label = "每周番剧表"
@@ -35,35 +36,35 @@ class bangumi_n_panel_ui(bpy.types.Panel):
         datelist =["周日","周一","周二","周三","周四","周五","周六"]
         bangumi_part = layout.box()
         #把panel拆成七列
-        s1=bangumi_part.split(factor=0.134)
-        c1=s1.column()
+        row=bangumi_part.row()
+
+        c1=row.column(align=True)
+        c2=row.column(align=True)
+        c3=row.column(align=True)
+        c4=row.column(align=True)
+        c5=row.column(align=True)
+        c6=row.column(align=True)
+        c7=row.column(align=True)
         
-        s2=s1.split(factor=0.15)
-        c2=s2.column()
-        
-        s3=s2.split(factor=0.19)
-        c3=s3.column()
-        
-        s4=s3.split(factor=0.24)
-        c4=s4.column()
-        
-        s5=s4.split(factor=0.3)
-        c5=s5.column()
-        
-        s6=s5.split(factor=0.5)
-        c6=s6.column()
-        
-        c7=s6.column()
+        from datetime import datetime
+        day=datetime.today().isoweekday()
+
 
         #把七列写进列表
         all_columns = [c1,c2,c3,c4,c5,c6,c7]
         for i in range(7):
+            if i==day or (i==0 and day==7):
+                all_columns[i].label(text="今日")
+            else:
+                all_columns[i].label(text='  ')
+        for i in range(7):
             all_columns[i].label(text=datelist[i])
-
+        
         if scene.source_flag == 'bilibili':
-            pass
+            path=os.path.dirname(os.path.abspath(__file__))+'\\'+'src'+'\\'+'bilibili_info'
+            total_list=pickle.load(open(path,"rb"))
         elif scene.source_flag == 'bangumi':
-            pass
-
+            path=os.path.dirname(os.path.abspath(__file__))+'\\'+'src'+'\\'+'bangumi_info'
+            total_list=pickle.load(open(path,"rb"))
 
 

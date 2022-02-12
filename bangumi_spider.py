@@ -13,7 +13,7 @@ def get_proxy_():
     if len(proxy) != 0:
         proxies = {
             "http": proxy['http'],
-            "https": proxy['http']
+            "https": proxy['https'].replace('https','http')
         }
         return proxies
 
