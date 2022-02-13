@@ -60,9 +60,13 @@ class bangumi_n_panel_ui(bpy.types.Panel):
         for i in range(7):
             all_columns[i].label(text=datelist[i])
         
+        week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
         if scene.source_flag == 'bilibili':
             path=os.path.dirname(os.path.abspath(__file__))+'\\'+'src'+'\\'+'bilibili_info'
             total_list=pickle.load(open(path,"rb"))
+            for i in range(7):
+                for j in range(len(total_list[0][i])):
+                    all_columns[i].template_icon(text="",icon_value=bangumi_cover["bilibili_"+week[i]+"_"+str(j)]["bilibili_"+week[i]+"_"+str(j)].icon_id)
         elif scene.source_flag == 'bangumi':
             path=os.path.dirname(os.path.abspath(__file__))+'\\'+'src'+'\\'+'bangumi_info'
             total_list=pickle.load(open(path,"rb"))

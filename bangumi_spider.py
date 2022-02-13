@@ -170,7 +170,7 @@ def downloader(total_list,i):
 
         #获取图片保存路径
         # img_save_path = os.getcwd()+'\\'+'img'+'\\'+week[i]
-        img_save_path = os.path.dirname(os.path.abspath(__file__)) +'\\'+'img'+'\\'+week[i]
+        img_save_path = os.path.dirname(os.path.abspath(__file__)) +'\\'+'img'+'\\'+"bangumi"+"\\"+week[i]
 
         #创建图片保存路径
         if not os.path.exists(img_save_path):

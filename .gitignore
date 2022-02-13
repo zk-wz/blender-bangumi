@@ -132,4 +132,4 @@ dmypy.json
 .vscode/
 
 #img
-img/*/*.jpg
+img/*
