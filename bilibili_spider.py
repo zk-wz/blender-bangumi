@@ -1,6 +1,6 @@
 
 from .bangumi_spider import get_link
-from .bangumi_spider import muti_process_get_pic
+from .bangumi_spider import multi_process_get_pic
 import time
 import os
 import pickle
@@ -77,7 +77,7 @@ def downloader(total_list,i):
 
         #获取图片保存路径
         # img_save_path = os.getcwd()+'\\'+'img'+'\\'+week[i]
-        img_save_path = os.path.dirname(os.path.abspath(__file__)) +'\\'+'img'+"\\"+"bilibili"+'\\'+week[i]
+        img_save_path = os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)),'img'),"bilibili"),week[i])
 
         #创建图片保存路径
         if not os.path.exists(img_save_path):
@@ -93,7 +93,7 @@ def downloader(total_list,i):
                 #获取图片名称
                 bangumi_name=bangumi_name_list_cn[j]
 
-                with open(img_save_path+'\\'+str(j)+'.jpg', 'wb') as f:
+                with open(os.path.join(img_save_path,str(j)+'.jpg'), 'wb') as f:
                 # with open(img_save_path+'\\'+bangumi_name+'.jpg', 'wb') as f:
                     f.write(img.content)
                     print('番剧：“%s” 的封面下载完成！' % bangumi_name)
@@ -105,14 +105,14 @@ def bilibili_main():
     total_list=parse_bilibili_calendar(week_bangumi_list)
 
     #保存番剧信息，优化读取效率
-    path=os.path.dirname(os.path.abspath(__file__))+'\\'+'src'
+    path=os.path.join(os.path.dirname(os.path.abspath(__file__)),'src')
     if not os.path.exists(path):
         os.makedirs(path)
-    with open(path+'\\'+'bilibili_info',"wb") as f:
+    with open(os.path.join(path,'bilibili_info'),"wb") as f:
         pickle.dump(total_list,f)
 
     # print(total_list)
-    muti_process_get_pic(total_list,7,downloader)
+    multi_process_get_pic(total_list,7,downloader)
     print('爬取完成！耗时：%s' % (time.time()-t)+'秒')
 
 

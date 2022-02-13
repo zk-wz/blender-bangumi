@@ -33,7 +33,7 @@ def get_link(url):
 
     # bangumi_content = requests.get(url, proxies=proxies, headers=headers)
     status = count = 0
-    max_count = 5 #最大重试次数
+    max_count = 3 #最大重试次数
 
     while status != 200 and count < max_count:
         try:
@@ -72,6 +72,7 @@ def parse_bangumi_calendar(bangumi_content):
         bangumi_name_list_cn = []
         bangumi_name_list_jp = []
         img_url_list = []
+        bangumi_link_list = []
         for i in range(0,7):
 
             temp=[]
@@ -89,6 +90,7 @@ def parse_bangumi_calendar(bangumi_content):
             
             name_list_cn=[]
             name_list_jp=[]
+            day_link_list=[]
             #若是有中文部分，则将中文名称添加到列表name_list_cn，否则添加空字符串，方便之后分离，日文同理
             #需要同时抓取日文和中文是因为有些番剧名称只有日文，没有中文
             for j in range(len(each_bangumi)):
@@ -108,6 +110,10 @@ def parse_bangumi_calendar(bangumi_content):
                 else:
                     name_list_jp.append('')
 
+                #番剧链接
+                link = re.findall(r'<a href=".*?" class="nav">', each_bangumi[j])
+                day_link_list.append(r"https://bgm.tv"+link[0][9:-14])
+
             temp=[]
 
             #中文名称列表解析
@@ -125,17 +131,34 @@ def parse_bangumi_calendar(bangumi_content):
 
             bangumi_name_list_jp.append(temp)
 
+            temp=[]
+            
+            #番剧链接列表解析
+            bangumi_link_list.append(day_link_list)
+
 
         name_fix(bangumi_name_list_cn)
         name_fix(bangumi_name_list_jp)
 
-    
+        bangumi_name_list = []
+        #获取图片名称
+        for i in range(7):
+            temp=[]
+            for j in range(len(bangumi_name_list_cn[i])):
+                if bangumi_name_list_cn[i][j]!='':
+                    temp.append(bangumi_name_list_cn[i][j])
+                else:
+                    temp.append(bangumi_name_list_jp[i][j])
+            bangumi_name_list.append(temp)
+
         #拼接以上列表
         #中文名称下标为0，日文名称下标为1，图片直链下标为2
         total_list = []
-        total_list.append(bangumi_name_list_cn)
-        total_list.append(bangumi_name_list_jp)
+        total_list.append(bangumi_name_list)
+        # total_list.append(bangumi_name_list_jp)
         total_list.append(img_url_list)
+        total_list.append(bangumi_link_list)
+        
         
 
         return total_list
@@ -162,15 +185,14 @@ def downloader(total_list,i):
 
 
         #获取图片直链列表
-        img_url_list = total_list[2][i]
+        img_url_list = total_list[1][i]
 
         #获取番剧名称列表
-        bangumi_name_list_cn = total_list[0][i]
-        bangumi_name_list_jp = total_list[1][i]
+        bangumi_name_list = total_list[0][i]
 
         #获取图片保存路径
         # img_save_path = os.getcwd()+'\\'+'img'+'\\'+week[i]
-        img_save_path = os.path.dirname(os.path.abspath(__file__)) +'\\'+'img'+'\\'+"bangumi"+"\\"+week[i]
+        img_save_path = os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)),'img'),"bangumi"),week[i])
 
         #创建图片保存路径
         if not os.path.exists(img_save_path):
@@ -183,13 +205,9 @@ def downloader(total_list,i):
 
             if img:
 
-                #获取图片名称
-                if bangumi_name_list_cn[j]!='':
-                    bangumi_name=bangumi_name_list_cn[j]
-                else:
-                    bangumi_name=bangumi_name_list_jp[j]
+                bangumi_name = bangumi_name_list[j]
 
-                with open(img_save_path+'\\'+str(j)+'.jpg', 'wb') as f:
+                with open(os.path.join(img_save_path,str(j)+'.jpg'), 'wb') as f:
                 # with open(img_save_path+'\\'+bangumi_name+'.jpg', 'wb') as f:
                     f.write(img.content)
                     print('番剧：“%s” 的封面下载完成！' % bangumi_name)
@@ -221,7 +239,7 @@ def downloader(total_list,i):
 
 
 #多线程下载图片
-def muti_process_get_pic(total_list,tread_num,target):
+def multi_process_get_pic(total_list,tread_num,target):
 
     treads = []
     for i in range(tread_num):
@@ -245,15 +263,15 @@ def bangumi_main():
     total_list = parse_bangumi_calendar(bangumi_content)
 
     #保存番剧信息，优化读取效率
-    path=os.path.dirname(os.path.abspath(__file__))+'\\'+'src'
+    path=os.path.join(os.path.dirname(os.path.abspath(__file__)),'src')
     if not os.path.exists(path):
         os.makedirs(path)
-    with open(path+'\\'+'bangumi_info',"wb") as f:
+    with open(os.path.join(path,'bangumi_info'),"wb") as f:
         pickle.dump(total_list,f)
 
 
     # downloader(total_list)
-    muti_process_get_pic(total_list,7,downloader)
+    multi_process_get_pic(total_list,7,downloader)
     # test(total_list)
     print('爬取完成！耗时：'+str(time.time()-t)+'秒')
 
