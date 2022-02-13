@@ -25,7 +25,10 @@ classes = [bangumi_props,
            Open_bangumi_url,
            Bangumi_Spider,
            Change_calender,
-           bangumi_n_panel_ui]
+           bangumi_n_panel_ui,
+           Next_Day,
+           Previous_Day,
+           Nothing]
 
 
 

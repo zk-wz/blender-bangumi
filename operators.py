@@ -8,6 +8,52 @@ import re
 from . import ui
 
 
+class Nothing(bpy.types.Operator):
+    bl_idname = "bangumi.nothing"
+    bl_label = "Nothing"
+    bl_description = "啥都不会发生"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        return {"FINISHED"}
+
+
+
+class Next_Day(bpy.types.Operator):
+    bl_idname = "bangumi.next_day"
+    bl_label = "next_day"
+    bl_description = "下一天"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        
+        return {"FINISHED"}
+
+
+class Previous_Day(bpy.types.Operator):
+    bl_idname = "bangumi.previous_day"
+    bl_label = "previous_day"
+    bl_description = "上一天"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        
+        return {"FINISHED"}
+
+
+
 class Change_calender(bpy.types.Operator):
     bl_idname = "bangumi.change_calender"
     bl_label = "change_calender"

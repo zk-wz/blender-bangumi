@@ -114,24 +114,24 @@ def parse_bangumi_calendar(bangumi_content):
                 link = re.findall(r'<a href=".*?" class="nav">', each_bangumi[j])
                 day_link_list.append(r"https://bgm.tv"+link[0][9:-14])
 
-            temp=[]
+            # temp=[]
 
             #中文名称列表解析
-            for j in range(len(name_list_cn)):
-                temp.append(name_list_cn[j])
+            # for j in range(len(name_list_cn)):
+            #     temp.append(name_list_cn[j])
 
-            bangumi_name_list_cn.append(temp)
+            bangumi_name_list_cn.append(name_list_cn)
 
 
-            temp=[]
+            # temp=[]
 
             #日文名称列表解析
-            for j in range(len(name_list_jp)):
-                temp.append(name_list_jp[j])
+            # for j in range(len(name_list_jp)):
+            #     temp.append(name_list_jp[j])
 
-            bangumi_name_list_jp.append(temp)
+            bangumi_name_list_jp.append(name_list_jp)
 
-            temp=[]
+            # temp=[]
             
             #番剧链接列表解析
             bangumi_link_list.append(day_link_list)

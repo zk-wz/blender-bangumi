@@ -44,51 +44,81 @@ class bangumi_n_panel_ui(bpy.types.Panel):
 
         #番剧列表
         datelist =["周日","周一","周二","周三","周四","周五","周六"]
-        bangumi_part = layout.box()
-        #把panel拆成七列
-        row=bangumi_part.row()
-
-        c1=row.column(align=True)
-        c2=row.column(align=True)
-        c3=row.column(align=True)
-        c4=row.column(align=True)
-        c5=row.column(align=True)
-        c6=row.column(align=True)
-        c7=row.column(align=True)
-        
         from datetime import datetime
         day=datetime.today().isoweekday()
+        bangumi_part = layout.box()
+        row=bangumi_part.row()
 
-        #把七列写进列表
-        all_columns = [c1,c2,c3,c4,c5,c6,c7]
-        for i in range(7):
-            if i==day or (i==0 and day==7):
-                all_columns[i].label(text="今日")
+
+        if scene.bangumi_property.week_day_flag:
+
+            #把panel拆成七列
+            c1=row.column(align=True)
+            c2=row.column(align=True)
+            c3=row.column(align=True)
+            c4=row.column(align=True)
+            c5=row.column(align=True)
+            c6=row.column(align=True)
+            c7=row.column(align=True)
+            
+
+            #把七列写进列表
+            all_columns = [c1,c2,c3,c4,c5,c6,c7]
+            for i in range(7):
+                if i==day or (i==0 and day==7):
+                    all_columns[i].operator("bangumi.nothing",text="今日",emboss=False)
+                else:
+                    all_columns[i].operator("bangumi.nothing",text='  ',emboss=False)
+            for i in range(7):
+                all_columns[i].operator("bangumi.nothing",text=week[i],emboss=False)
+            
+            if scene.bangumi_property.source_flag == 'bilibili':
+                # info_path=os.path.dirname(os.path.abspath(__file__))+'\\'+'src'+'\\'+'bilibili_info'
+                # with open(info_path,"rb") as f:
+                #     total_list=pickle.load(f)
+                multi_process_loader(all_columns,7,create_bilibili_calendar)
+                # for i in range(7):
+                #     for j in range(len(bangumi_name["bilibili"][i])):
+                #         pic=bangumi_cover["bilibili"]["bilibili_"+week[i]+"_"+str(j)]
+                #         all_columns[i].template_icon(pic.icon_id,scale=3.5)
+                #         all_columns[i].operator("bangumi.open_bilibili_url",text=bangumi_name["bilibili"][i][j]).flag="+"+str(i)+"_"+str(j)+"-"
+            
             else:
-                all_columns[i].label(text='  ')
-        for i in range(7):
-            all_columns[i].label(text=datelist[i])
-        
-        if scene.bangumi_property.source_flag == 'bilibili':
-            # info_path=os.path.dirname(os.path.abspath(__file__))+'\\'+'src'+'\\'+'bilibili_info'
-            # with open(info_path,"rb") as f:
-            #     total_list=pickle.load(f)
-            multi_process_loader(all_columns,7,create_bilibili_calendar)
-            # for i in range(7):
-            #     for j in range(len(bangumi_name["bilibili"][i])):
-            #         pic=bangumi_cover["bilibili"]["bilibili_"+week[i]+"_"+str(j)]
-            #         all_columns[i].template_icon(pic.icon_id,scale=3.5)
-            #         all_columns[i].operator("bangumi.open_bilibili_url",text=bangumi_name["bilibili"][i][j]).flag="+"+str(i)+"_"+str(j)+"-"
-        
-        elif scene.bangumi_property.source_flag == 'bangumi':
 
-            multi_process_loader(all_columns,7,create_bangumi_calendar)
-            # for i in range(7):
-            #     for j in range(len(bangumi_name["bangumi"][i])):
-            #         pic=bangumi_cover["bangumi"]["bangumi_"+week[i]+"_"+str(j)]
-            #         all_columns[i].template_icon(pic.icon_id,scale=3.5)
-            #         # all_columns[i].label(text=bangumi_name["bangumi"][i][j])
-            #         all_columns[i].operator("bangumi.open_bangumi_url",text=bangumi_name["bangumi"][i][j]).bangumi_flag="+"+str(i)+"_"+str(j)+"-"
+                multi_process_loader(all_columns,7,create_bangumi_calendar)
+                # for i in range(7):
+                #     for j in range(len(bangumi_name["bangumi"][i])):
+                #         pic=bangumi_cover["bangumi"]["bangumi_"+week[i]+"_"+str(j)]
+                #         all_columns[i].template_icon(pic.icon_id,scale=3.5)
+                #         # all_columns[i].label(text=bangumi_name["bangumi"][i][j])
+                #         all_columns[i].operator("bangumi.open_bangumi_url",text=bangumi_name["bangumi"][i][j]).bangumi_flag="+"+str(i)+"_"+str(j)+"-"
+
+        else:
+            cl=row.column()
+            cc=row.column()
+            cr=row.column()
+
+            if day==7:
+                i=0
+            else:
+                i=day
+            cl.operator("bangumi.previous_day",text='',icon="TRIA_LEFT")
+            cc.operator("bangumi.nothing",text="今日",emboss=False)
+            cc.operator("bangumi.nothing",text=week[i],emboss=False)
+            cr.operator("bangumi.next_day",text='',icon="TRIA_RIGHT")
+
+            if scene.bangumi_property.source_flag == 'bilibili':
+                for j in range(len(bangumi_name["bilibili"][i])):
+                    pic=bangumi_cover["bilibili"]["bilibili_"+week[i]+"_"+str(j)]
+                    cc.template_icon(pic.icon_id,scale=5)
+                    cc.operator("bangumi.open_bilibili_url",text=bangumi_name["bilibili"][i][j]).flag="+"+str(i)+"_"+str(j)+"-"
+
+            else:
+                for j in range(len(bangumi_name["bangumi"][i])):
+                    pic=bangumi_cover["bangumi"]["bangumi_"+week[i]+"_"+str(j)]
+                    cc.template_icon(pic.icon_id,scale=3.5)
+                    cc.operator("bangumi.open_bangumi_url",text=bangumi_name["bangumi"][i][j]).bangumi_flag="+"+str(i)+"_"+str(j)+"-"   
+
 
 
 def create_bilibili_calendar(all_columns,i):
