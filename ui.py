@@ -33,6 +33,14 @@ class bangumi_n_panel_ui(bpy.types.Panel):
             source_choice.operator("bangumi.bilibili", text="",icon="FILE_REFRESH")
         elif scene.bangumi_property.source_flag == 'bangumi':
             source_choice.operator("bangumi.bangumi", text="",icon="FILE_REFRESH")
+        day_week=source_choice.column()
+        day_week.scale_x=0.5
+
+        if scene.bangumi_property.week_day_flag == True:
+            day_week.operator("bangumi.change_calender", text="周历")
+        else:
+            day_week.operator("bangumi.change_calender", text="日历")
+
 
         #番剧列表
         datelist =["周日","周一","周二","周三","周四","周五","周六"]
@@ -50,7 +58,6 @@ class bangumi_n_panel_ui(bpy.types.Panel):
         
         from datetime import datetime
         day=datetime.today().isoweekday()
-
 
         #把七列写进列表
         all_columns = [c1,c2,c3,c4,c5,c6,c7]
@@ -142,10 +149,12 @@ def ui_register():
             for j in range(len(bilibili_total_list[0][i])):
                 bilibili_pic_path=os.path.join(os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "bilibili"), week[i]), str(j)+'.jpg')
                 error_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "error.png")
-
-                if not os.path.exists(bilibili_pic_path):
-                    img=imbuf.load(error_path)
-                    imbuf.write(image=img,filepath=bilibili_pic_path)
+                try:
+                    if not os.path.exists(bilibili_pic_path):
+                        img=imbuf.load(error_path)
+                        imbuf.write(image=img,filepath=bilibili_pic_path)
+                except:
+                    print('error')
 
                 pcoll.load("bilibili_"+week[i]+"_"+str(j), bilibili_pic_path, 'IMAGE')
 

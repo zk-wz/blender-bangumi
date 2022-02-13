@@ -7,6 +7,28 @@ import webbrowser
 import re
 from . import ui
 
+
+class Change_calender(bpy.types.Operator):
+    bl_idname = "bangumi.change_calender"
+    bl_label = "change_calender"
+    bl_description = "切换日历显示样式"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+
+        if(context.scene.bangumi_property.week_day_flag == True):
+            context.scene.bangumi_property.week_day_flag = False
+        else:
+            context.scene.bangumi_property.week_day_flag = True
+
+        return {"FINISHED"}
+
+
+
 class Bilibili_Spider(bpy.types.Operator):
     bl_idname = "bangumi.bilibili"
     bl_label = "bilibili_bangumi_spider"

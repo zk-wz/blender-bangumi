@@ -132,3 +132,6 @@ dmypy.json
 .vscode/
 
 *.jpg
+
+
+workspace.code-workspace
