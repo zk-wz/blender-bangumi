@@ -161,22 +161,24 @@ def ui_register():
             for j in range(len(bangumi_total_list[0][i])):
                 bangumi_pic_path=os.path.join(os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "bangumi"), week[i]), str(j)+'.jpg')
                 error_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "error.png")
+                try:
+                    if not os.path.exists(bangumi_pic_path):
+                        img=imbuf.load(error_path)
+                        imbuf.write(image=img,filepath=bangumi_pic_path)
 
-                if not os.path.exists(bangumi_pic_path):
-                    img=imbuf.load(error_path)
-                    imbuf.write(image=img,filepath=bangumi_pic_path)
-
-                img=imbuf.load(bangumi_pic_path)
-                width=img.size[0]
-                height=img.size[1]
-                if width != height:
-                    img_size=min(width,height)-1
-                    x_min=int(width/2-img_size/2)
-                    y_min=int(height/2-img_size/2)
-                    x_max=int(width/2+img_size/2)
-                    y_max=int(height/2+img_size/2)
-                    img.crop((x_min,y_min),(x_max,y_max))
-                    imbuf.write(image=img,filepath=bangumi_pic_path)
+                    img=imbuf.load(bangumi_pic_path)
+                    width=img.size[0]
+                    height=img.size[1]
+                    if width != height:
+                        img_size=min(width,height)-1
+                        x_min=int(width/2-img_size/2)
+                        y_min=int(height/2-img_size/2)
+                        x_max=int(width/2+img_size/2)
+                        y_max=int(height/2+img_size/2)
+                        img.crop((x_min,y_min),(x_max,y_max))
+                        imbuf.write(image=img,filepath=bangumi_pic_path)
+                except:
+                    print('error')
 
                 bgm.load("bangumi_"+week[i]+"_"+str(j), bangumi_pic_path, 'IMAGE')
 
