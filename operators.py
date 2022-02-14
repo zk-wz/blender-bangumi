@@ -6,7 +6,7 @@ import pickle
 import webbrowser
 import re
 from . import ui
-
+from datetime import datetime
 
 class Nothing(bpy.types.Operator):
     bl_idname = "bangumi.nothing"
@@ -34,7 +34,10 @@ class Next_Day(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        
+        if context.scene.bangumi_property.week_day!=7:
+            context.scene.bangumi_property.week_day += 1
+        else:
+            context.scene.bangumi_property.week_day = 1
         return {"FINISHED"}
 
 
@@ -49,7 +52,10 @@ class Previous_Day(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        
+        if context.scene.bangumi_property.week_day!=1:
+            context.scene.bangumi_property.week_day -= 1
+        else:
+            context.scene.bangumi_property.week_day = 7
         return {"FINISHED"}
 
 
@@ -70,6 +76,7 @@ class Change_calender(bpy.types.Operator):
             context.scene.bangumi_property.week_day_flag = False
         else:
             context.scene.bangumi_property.week_day_flag = True
+            context.scene.bangumi_property.week_day = datetime.today().isoweekday()
 
         return {"FINISHED"}
 
@@ -90,6 +97,7 @@ class Bilibili_Spider(bpy.types.Operator):
         ui.ui_unregister()
         ui.ui_register()
         get_link_bilibili()
+        self.report({'INFO'}, "数据更新完成")
         return {"FINISHED"}
 
 class Bangumi_Spider(bpy.types.Operator):
@@ -108,6 +116,7 @@ class Bangumi_Spider(bpy.types.Operator):
         ui.ui_unregister()
         ui.ui_register()
         get_link_bangumi()
+        self.report({'INFO'}, "数据更新完成")
         return {"FINISHED"}
 
 
