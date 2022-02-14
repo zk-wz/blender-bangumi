@@ -11,7 +11,6 @@ bl_info = {
 }
 
 # import bpy
-import imp
 from .ui import *
 from .operators import *
 from .utils import *
@@ -21,20 +20,31 @@ from .bilibili_spider import *
 
 
 classes = [bangumi_props,
+
            Bilibili_Spider,
+           Bangumi_Spider,
+
            Open_bilibili_url,
            Open_bangumi_url,
-           Imgapi_Refresh,
-           Bangumi_Spider,
+
            Change_calender,
+           Next_Day,
+           Previous_Day,
+
            bangumi_n_father_panel,
            Bangumi_Settings,
            Bangumi_Calendar,
+
+           Imgapi_Refresh,
            rand_img_father_panel,
            Rand_Img_Settings,
            Rand_Img_Pic,
-           Next_Day,
-           Previous_Day,
+           
+           Refresh_Yiyan,
+           yiyan_father_panel,
+           Yiyan_Settings,
+           Yiyan,
+
            Nothing]
 
 
@@ -46,7 +56,6 @@ def register():
     operator_register()
     for class_ in classes:
         bpy.utils.register_class(class_)
-
     bpy.types.Scene.bangumi_property = bpy.props.PointerProperty(type=bangumi_props)
 
 def unregister():

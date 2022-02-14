@@ -8,6 +8,7 @@ import re
 from . import ui
 from datetime import datetime
 from . import imgapi_spider
+import random
 
 class Nothing(bpy.types.Operator):
     bl_idname = "bangumi.nothing"
@@ -20,6 +21,23 @@ class Nothing(bpy.types.Operator):
         return True
 
     def execute(self, context):
+        return {"FINISHED"}
+
+
+class Refresh_Yiyan(bpy.types.Operator):
+    bl_idname = "bangumi.refresh_yiyan"
+    bl_label = "刷新一言"
+    bl_description = "刷新一言"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        yiyan=get_yiyan()
+        context.scene.bangumi_property.yiyan=get_yiyan_saying(yiyan)
+        context.scene.bangumi_property.yiyan_source=get_yiyan_source(yiyan)
         return {"FINISHED"}
 
 
@@ -75,7 +93,7 @@ class Imgapi_Refresh(bpy.types.Operator):
 
         bangumi_property=context.scene.bangumi_property
         imgapi_spider.imgapi_dl(bangumi_property.imgapi_style,bangumi_property.imgapi_category)
-        
+
         ui.imgapi_register()
         return {"FINISHED"}
 
@@ -182,7 +200,19 @@ class Open_bangumi_url(bpy.types.Operator):
         return {"FINISHED"}
 
 
+def get_yiyan():
+    yiyan_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"), "yiyan")
+    with open(yiyan_path,"rb") as f:
+        yiyan_list=pickle.load(f)
+    return random.choice(yiyan_list)
 
+def get_yiyan_saying(yiyan):
+    flag=yiyan.find("\n")
+    return yiyan[:flag]
+
+def get_yiyan_source(yiyan):
+    flag=yiyan.find("\n")
+    return "    "+yiyan[flag+1:]
 
 bilibili_link_list={}
 bangumi_link_list={}

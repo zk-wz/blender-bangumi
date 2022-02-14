@@ -148,7 +148,9 @@ class bangumi_n_father_panel(bpy.types.Panel,Bangumi_Panel):
         # return super().draw_header(context)
 
     def draw(self, context):
-        pass
+        layout = self.layout.box().column(align=True)
+        layout.operator("bangumi.nothing",text=context.scene.bangumi_property.yiyan,emboss=False)
+        layout.operator("bangumi.nothing",text=context.scene.bangumi_property.yiyan_source,emboss=False)
 
 
 #随机涩图总面板
@@ -201,6 +203,39 @@ class Rand_Img_Pic(bpy.types.Panel,Bangumi_Panel):
         layout.template_icon(pic.icon_id,scale=pic_scale)
 
 
+class yiyan_father_panel(bpy.types.Panel,Bangumi_Panel):
+    bl_idname = "N_PT_Yiyan_Father"
+    bl_label = "一言"
+
+    def draw_header(self,context):
+        self.layout.label(text="",icon='INFO')
+
+    def draw(self, context):
+        pass
+
+class Yiyan_Settings(bpy.types.Panel,Bangumi_Panel):
+    bl_idname = "N_PT_Yiyan_Settings"
+    bl_label = "设定"
+    bl_parent_id = "N_PT_Yiyan_Father"
+
+    def draw(self, context):
+        layout = self.layout
+        row=layout.row()
+        row.operator("bangumi.refresh_yiyan",icon='FILE_REFRESH')
+                
+
+class Yiyan(bpy.types.Panel,Bangumi_Panel):
+    bl_idname = "N_PT_Yiyan"
+    bl_label = "一言"
+    bl_parent_id = "N_PT_Yiyan_Father"
+
+    def draw(self, context):
+        layout = self.layout.box().column(align=True)
+        layout.operator("bangumi.nothing",text=context.scene.bangumi_property.yiyan,emboss=False)
+        layout.operator("bangumi.nothing",text=context.scene.bangumi_property.yiyan_source,emboss=False)
+        
+
+
 def create_bilibili_calendar(all_columns,i,pic_scale):
 
     for j in range(len(bangumi_name["bilibili"][i])):
@@ -239,12 +274,12 @@ def refresh_name(platform):
         info_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)),'src'),'bilibili_info')
         with open(info_path,"rb") as f:
             total_list=pickle.load(f)
-            bangumi_name["bilibili"]=total_list[0]
+        bangumi_name["bilibili"]=total_list[0]
     elif platform == 'bangumi':
         info_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)),'src'),'bangumi_info')
         with open(info_path,"rb") as f:
             total_list=pickle.load(f)
-            bangumi_name["bangumi"]=total_list[0]
+        bangumi_name["bangumi"]=total_list[0]
 
 def ui_register():
     refresh_name("bilibili")
@@ -254,54 +289,54 @@ def ui_register():
     bilibili_info_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)),'src'),'bilibili_info')
     with open(bilibili_info_path,"rb") as f:
         bilibili_total_list=pickle.load(f)
-        pcoll = bpy.utils.previews.new()
-        for i in range(7):
-            for j in range(len(bilibili_total_list[0][i])):
-                bilibili_pic_path=os.path.join(os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "bilibili"), week[i]), str(j)+'.jpg')
-                error_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "error.png")
-                try:
-                    if not os.path.exists(bilibili_pic_path):
-                        img=imbuf.load(error_path)
-                        imbuf.write(image=img,filepath=bilibili_pic_path)
-                except:
-                    print('error')
+    pcoll = bpy.utils.previews.new()
+    for i in range(7):
+        for j in range(len(bilibili_total_list[0][i])):
+            bilibili_pic_path=os.path.join(os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "bilibili"), week[i]), str(j)+'.jpg')
+            error_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "error.png")
+            try:
+                if not os.path.exists(bilibili_pic_path):
+                    img=imbuf.load(error_path)
+                    imbuf.write(image=img,filepath=bilibili_pic_path)
+            except:
+                print('error')
 
-                pcoll.load("bilibili_"+week[i]+"_"+str(j), bilibili_pic_path, 'IMAGE')
+            pcoll.load("bilibili_"+week[i]+"_"+str(j), bilibili_pic_path, 'IMAGE')
 
-        bangumi_cover["bilibili"]=pcoll
+    bangumi_cover["bilibili"]=pcoll
 
 
     #将bangumi番剧封面导入为blender icon
     bangumi_info_path = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)),'src'),'bangumi_info')
     with open(bangumi_info_path,"rb") as f:
         bangumi_total_list=pickle.load(f)
-        bgm = bpy.utils.previews.new()
-        for i in range(7):
-            for j in range(len(bangumi_total_list[0][i])):
-                bangumi_pic_path=os.path.join(os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "bangumi"), week[i]), str(j)+'.jpg')
-                error_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "error.png")
-                try:
-                    if not os.path.exists(bangumi_pic_path):
-                        img=imbuf.load(error_path)
-                        imbuf.write(image=img,filepath=bangumi_pic_path)
+    bgm = bpy.utils.previews.new()
+    for i in range(7):
+        for j in range(len(bangumi_total_list[0][i])):
+            bangumi_pic_path=os.path.join(os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "bangumi"), week[i]), str(j)+'.jpg')
+            error_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "error.png")
+            try:
+                if not os.path.exists(bangumi_pic_path):
+                    img=imbuf.load(error_path)
+                    imbuf.write(image=img,filepath=bangumi_pic_path)
 
-                    img=imbuf.load(bangumi_pic_path)
-                    width=img.size[0]
-                    height=img.size[1]
-                    if width != height:
-                        img_size=min(width,height)-1
-                        x_min=int(width/2-img_size/2)
-                        y_min=int(height/2-img_size/2)
-                        x_max=int(width/2+img_size/2)
-                        y_max=int(height/2+img_size/2)
-                        img.crop((x_min,y_min),(x_max,y_max))
-                        imbuf.write(image=img,filepath=bangumi_pic_path)
-                except:
-                    print('error')
+                img=imbuf.load(bangumi_pic_path)
+                width=img.size[0]
+                height=img.size[1]
+                if width != height:
+                    img_size=min(width,height)-1
+                    x_min=int(width/2-img_size/2)
+                    y_min=int(height/2-img_size/2)
+                    x_max=int(width/2+img_size/2)
+                    y_max=int(height/2+img_size/2)
+                    img.crop((x_min,y_min),(x_max,y_max))
+                    imbuf.write(image=img,filepath=bangumi_pic_path)
+            except:
+                print('error')
 
-                bgm.load("bangumi_"+week[i]+"_"+str(j), bangumi_pic_path, 'IMAGE')
+            bgm.load("bangumi_"+week[i]+"_"+str(j), bangumi_pic_path, 'IMAGE')
 
-        bangumi_cover["bangumi"]=bgm
+    bangumi_cover["bangumi"]=bgm
 
 
 def ui_unregister():
