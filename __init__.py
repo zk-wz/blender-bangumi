@@ -2,9 +2,9 @@
 bl_info = {
     "name" : "blender-bangumi",
     "author" : "掌控-物质",
-    "description" : "",
+    "description" : "能让你在blender更方便的追（mo）番（yu）",
     "blender" : (2, 80, 0),
-    "version" : (0, 0, 1),
+    "version" : (1, 1, 0),
     "location" : "",
     "warning" : "",
     "category" : "Bangumi"
@@ -16,7 +16,7 @@ from .operators import *
 from .utils import *
 from .bangumi_spider import *
 from .bilibili_spider import *
-import bpy.utils.previews
+# import bpy.utils.previews
 
 
 classes = [bangumi_props,
