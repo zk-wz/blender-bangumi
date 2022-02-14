@@ -7,6 +7,7 @@ import webbrowser
 import re
 from . import ui
 from datetime import datetime
+from . import imgapi_spider
 
 class Nothing(bpy.types.Operator):
     bl_idname = "bangumi.nothing"
@@ -56,6 +57,26 @@ class Previous_Day(bpy.types.Operator):
             context.scene.bangumi_property.week_day -= 1
         else:
             context.scene.bangumi_property.week_day = 7
+        return {"FINISHED"}
+
+
+class Imgapi_Refresh(bpy.types.Operator):
+    bl_idname = "bangumi.imgapi_refresh"
+    bl_label = "刷新图片"
+    bl_description = "刷新图片"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        ui.imgapi_unregister()
+
+        bangumi_property=context.scene.bangumi_property
+        imgapi_spider.imgapi_dl(bangumi_property.imgapi_style,bangumi_property.imgapi_category)
+        
+        ui.imgapi_register()
         return {"FINISHED"}
 
 

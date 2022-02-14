@@ -1,3 +1,4 @@
+
 import bpy
 import pickle
 import os
@@ -39,6 +40,7 @@ class Bangumi_Settings(bpy.types.Panel,Bangumi_Panel):
             s.prop(scene.bangumi_property,"day_pic_scale")
 
 
+# 番剧日历面板
 class Bangumi_Calendar(bpy.types.Panel,Bangumi_Panel):
     bl_label = "番剧日历"
     bl_idname = "N_PT_Bangumi_Calendar"
@@ -134,7 +136,6 @@ class Bangumi_Calendar(bpy.types.Panel,Bangumi_Panel):
 
         
 
-
 #番剧总面板
 class bangumi_n_father_panel(bpy.types.Panel,Bangumi_Panel):
     bl_label = "每周番剧表"
@@ -143,13 +144,61 @@ class bangumi_n_father_panel(bpy.types.Panel,Bangumi_Panel):
 
     def draw_header(self,context):
         layout = self.layout
-        layout.label(text="",icon='FUND')
+        layout.label(text="",icon='KEYTYPE_KEYFRAME_VEC')
         # return super().draw_header(context)
 
     def draw(self, context):
         pass
 
 
+#随机涩图总面板
+class rand_img_father_panel(bpy.types.Panel,Bangumi_Panel):
+    bl_idname = "N_PT_Rand_Img_Father"
+    bl_label = "随机涩图"
+
+    def draw_header(self,context):
+        self.layout.label(text="",icon='FUND')
+
+    def draw(self, context):
+        pass
+        
+#随机涩图设置面板
+class Rand_Img_Settings(bpy.types.Panel,Bangumi_Panel):
+    bl_idname = "N_PT_Rand_Img_Settings"
+    bl_label = "设定"
+    bl_parent_id = "N_PT_Rand_Img_Father"
+
+    def draw(self, context):
+        layout = self.layout
+        bangumi_property = context.scene.bangumi_property
+
+        row1=layout.row()
+        if bangumi_property.imgapi_category != "cosplay":
+            style = row1.column()
+            style.prop(bangumi_property,"imgapi_style")
+
+        category=row1.column()
+        category.prop(bangumi_property,"imgapi_category")
+
+        row2=layout.row()
+        scale=row2.column()
+        scale.prop(bangumi_property,"imgapi_scale")
+
+        refresh=row2.column()
+        refresh.operator("bangumi.imgapi_refresh",text="",icon='FILE_REFRESH')
+
+        
+#随机涩图图片显示面板
+class Rand_Img_Pic(bpy.types.Panel,Bangumi_Panel):
+    bl_idname = "N_PT_Rand_Img_Pic"
+    bl_label = "图片"
+    bl_parent_id = "N_PT_Rand_Img_Father"
+
+    def draw(self, context):
+        layout = self.layout
+        pic = other_pic["imgapi"]["rand_img"]
+        pic_scale = context.scene.bangumi_property.imgapi_scale
+        layout.template_icon(pic.icon_id,scale=pic_scale)
 
 
 def create_bilibili_calendar(all_columns,i,pic_scale):
@@ -182,6 +231,7 @@ def multi_process_loader(all_columns,tread_num,target,pic_scale):
 
 bangumi_name = {}
 bangumi_cover = {}
+other_pic = {}
 week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
 def refresh_name(platform):
@@ -258,3 +308,25 @@ def ui_unregister():
     for pcoll in bangumi_cover.values():
         bpy.utils.previews.remove(pcoll)
     bangumi_cover.clear()
+
+
+# 将imgapi封面导入为blender icon
+def imgapi_register():
+    imgapi_pic2icon = bpy.utils.previews.new()
+    imgapi_pic_path=os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "rand_img"), 'img.jpg')
+    error_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "error.png")
+    try:
+        if not os.path.exists(imgapi_pic_path):
+            img=imbuf.load(error_path)
+            imbuf.write(image=img,filepath=imgapi_pic_path)
+    except:
+        print('error')
+
+    imgapi_pic2icon.load("rand_img", imgapi_pic_path, 'IMAGE')
+    other_pic["imgapi"]=imgapi_pic2icon
+
+
+def imgapi_unregister():
+    for pcoll in other_pic.values():
+        bpy.utils.previews.remove(pcoll)
+    other_pic.clear()

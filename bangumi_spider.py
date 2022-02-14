@@ -18,7 +18,11 @@ def get_proxy_():
         return proxies
 
     else:
-        return None
+        proxies = {
+            "http": None,
+            "https": None
+        }
+        return proxies
 
 
 

@@ -11,6 +11,7 @@ bl_info = {
 }
 
 # import bpy
+import imp
 from .ui import *
 from .operators import *
 from .utils import *
@@ -23,11 +24,15 @@ classes = [bangumi_props,
            Bilibili_Spider,
            Open_bilibili_url,
            Open_bangumi_url,
+           Imgapi_Refresh,
            Bangumi_Spider,
            Change_calender,
            bangumi_n_father_panel,
            Bangumi_Settings,
            Bangumi_Calendar,
+           rand_img_father_panel,
+           Rand_Img_Settings,
+           Rand_Img_Pic,
            Next_Day,
            Previous_Day,
            Nothing]
@@ -35,9 +40,9 @@ classes = [bangumi_props,
 
 
 def register():
-
     # add_property()
     ui_register()
+    imgapi_register()
     operator_register()
     for class_ in classes:
         bpy.utils.register_class(class_)
@@ -49,6 +54,10 @@ def unregister():
     for pcoll in bangumi_cover.values():
         bpy.utils.previews.remove(pcoll)
     bangumi_cover.clear()
+
+    for pcoll in other_pic.values():
+        bpy.utils.previews.remove(pcoll)
+    other_pic.clear()
 
     for class_ in classes:
         bpy.utils.unregister_class(class_)
