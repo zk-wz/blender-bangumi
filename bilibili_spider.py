@@ -96,10 +96,10 @@ def downloader(total_list,i):
                 with open(os.path.join(img_save_path,str(j)+'.jpg'), 'wb') as f:
                 # with open(img_save_path+'\\'+bangumi_name+'.jpg', 'wb') as f:
                     f.write(img.content)
-                    print('番剧：“%s” 的封面下载完成！' % bangumi_name)
+                    # print('番剧：“%s” 的封面下载完成！' % bangumi_name)
 
 def bilibili_main():
-    t=time.time()
+    # t=time.time()
     bilibili_content=get_link('https://bangumi.bilibili.com/web_api/timeline_global').json()
     week_bangumi_list=pre_handle_bilibili_calendar(bilibili_content)
     total_list=parse_bilibili_calendar(week_bangumi_list)
@@ -113,7 +113,7 @@ def bilibili_main():
 
     # print(total_list)
     multi_process_get_pic(total_list,7,downloader)
-    print('爬取完成！耗时：%s' % (time.time()-t)+'秒')
+    # print('爬取完成！耗时：%s' % (time.time()-t)+'秒')
 
 
 # if __name__ == '__main__':
