@@ -189,6 +189,9 @@ class Rand_Img_Settings(bpy.types.Panel,Bangumi_Panel):
         refresh=row2.column()
         refresh.operator("bangumi.imgapi_refresh",text="",icon='FILE_REFRESH')
 
+        row3=layout.row()
+        row3.operator("bangumi.switch_to_img_editor",icon="OUTLINER_OB_IMAGE")
+
         
 #随机涩图图片显示面板
 class Rand_Img_Pic(bpy.types.Panel,Bangumi_Panel):
@@ -197,10 +200,40 @@ class Rand_Img_Pic(bpy.types.Panel,Bangumi_Panel):
     bl_parent_id = "N_PT_Rand_Img_Father"
 
     def draw(self, context):
-        layout = self.layout
+        layout = self.layout.box()
         pic = other_pic["imgapi"]["rand_img"]
         pic_scale = context.scene.bangumi_property.imgapi_scale
         layout.template_icon(pic.icon_id,scale=pic_scale)
+
+#随机涩图图像编辑器总面板
+class imgeditor_randimg_father(bpy.types.Panel):
+    bl_idname = "N_PT_ImgEditor_RandImg_Father"
+    bl_label = "随机涩图"
+    bl_space_type = "IMAGE_EDITOR"
+    bl_region_type = "UI"
+    bl_category = "涩涩"
+
+    def draw_header(self,context):
+        self.layout.label(text="",icon='FUND')
+
+    def draw(self, context):
+        layout = self.layout
+        bangumi_property = context.scene.bangumi_property
+
+        style=layout.row()
+        if bangumi_property.imgapi_category != "cosplay":
+            style.prop(bangumi_property,"imgapi_style")
+
+        category=layout.row()
+        category.prop(bangumi_property,"imgapi_category")
+
+        refresh=layout.row()
+        refresh.operator("bangumi.img_editor_rand_img_refresh",icon='FILE_REFRESH')
+
+        row3=layout.row()
+        row3.operator("bangumi.quick_switch",icon='ERROR')
+
+
 
 
 class yiyan_father_panel(bpy.types.Panel,Bangumi_Panel):
@@ -228,6 +261,7 @@ class Yiyan(bpy.types.Panel,Bangumi_Panel):
     bl_idname = "N_PT_Yiyan"
     bl_label = "一言"
     bl_parent_id = "N_PT_Yiyan_Father"
+
 
     def draw(self, context):
         layout = self.layout.box().column(align=True)
@@ -348,7 +382,7 @@ def ui_unregister():
 # 将imgapi封面导入为blender icon
 def imgapi_register():
     imgapi_pic2icon = bpy.utils.previews.new()
-    imgapi_pic_path=os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "rand_img"), 'img.jpg')
+    imgapi_pic_path=os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "rand_img"), 'rand_img.jpg')
     error_path=os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "error.png")
     try:
         if not os.path.exists(imgapi_pic_path):

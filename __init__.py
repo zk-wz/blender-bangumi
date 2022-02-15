@@ -4,7 +4,7 @@ bl_info = {
     "author" : "掌控-物质",
     "description" : "能让你在blender更方便的追（mo）番（yu）",
     "blender" : (2, 80, 0),
-    "version" : (1, 1, 0),
+    "version" : (1, 3, 0),
     "location" : "",
     "warning" : "",
     "category" : "Bangumi"
@@ -36,9 +36,14 @@ classes = [bangumi_props,
            Bangumi_Calendar,
 
            Imgapi_Refresh,
+           Switch_to_ImgEditor,
            rand_img_father_panel,
            Rand_Img_Settings,
            Rand_Img_Pic,
+
+           ImgEditor_RandImg_Refresh,
+           Quick_Switch,
+           imgeditor_randimg_father,
            
            Refresh_Yiyan,
            yiyan_father_panel,

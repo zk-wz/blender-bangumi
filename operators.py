@@ -98,6 +98,68 @@ class Imgapi_Refresh(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class ImgEditor_RandImg_Refresh(bpy.types.Operator):
+    bl_idname = "bangumi.img_editor_rand_img_refresh"
+    bl_label = "刷新图片"
+    bl_description = "刷新图片"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        ui.imgapi_unregister()
+
+        bangumi_property=context.scene.bangumi_property
+        imgapi_spider.imgapi_dl(bangumi_property.imgapi_style,bangumi_property.imgapi_category)
+
+        if not test_img_exist():
+            pic_path=os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "rand_img"), "rand_img.jpg")
+            bpy.ops.image.open(filepath=pic_path)
+
+        bpy.ops.image.reload()
+
+        ui.imgapi_register()
+        return {"FINISHED"}
+
+
+class Quick_Switch(bpy.types.Operator):
+    bl_idname = "bangumi.quick_switch"
+    bl_label = "防社死"
+    bl_description = "防社死"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        context.area.ui_type = "VIEW_3D"
+        return {"FINISHED"}
+
+
+class Switch_to_ImgEditor(bpy.types.Operator):
+    bl_idname = "bangumi.switch_to_img_editor"
+    bl_label = "在图片编辑器中打开"
+    bl_description = "在图片编辑器中打开"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        if not test_img_exist():
+            pic_path=os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "rand_img"), "rand_img.jpg")
+            bpy.ops.image.open(filepath=pic_path)
+
+        context.area.ui_type = "IMAGE_EDITOR"
+        bpy.ops.image.reload()
+        return {"FINISHED"}
+
+
+
 
 class Change_calender(bpy.types.Operator):
     bl_idname = "bangumi.change_calender"
@@ -198,6 +260,13 @@ class Open_bangumi_url(bpy.types.Operator):
         y=int(re.search(r"_.*?-",self.bangumi_flag).group()[1:-1])
         webbrowser.open(url = bangumi_link_list[0][x][y], new = 0)
         return {"FINISHED"}
+
+
+def test_img_exist():
+    for i in bpy.data.images:
+        if i.name == "rand_img.jpg":
+            return True
+    return False
 
 
 def get_yiyan():

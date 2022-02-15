@@ -29,7 +29,7 @@ class bangumi_props(bpy.types.PropertyGroup):
         ("suiji","随机","随机")
     ]
     imgapi_category:bpy.props.EnumProperty(items=ImgApi_Categories, name="图片类型", default="dongman")
-    imgapi_scale:bpy.props.FloatProperty(name="图片缩放", default=12.0)
+    imgapi_scale:bpy.props.FloatProperty(name="图片缩放", default=10.0)
 
     yiyan=get_yiyan()
     yiyan:bpy.props.StringProperty(name="一言", default=get_yiyan_saying(yiyan))

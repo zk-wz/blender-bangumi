@@ -12,7 +12,7 @@ def imgapi_dl(imgapi_style,imgapi_category):
         if not os.path.exists(pic_path):
             os.makedirs(pic_path)
 
-        pic_path = os.path.join(pic_path, "img.jpg")
+        pic_path = os.path.join(pic_path, "rand_img.jpg")
 
         with open(pic_path, 'wb') as f:
             f.write(img.content)
