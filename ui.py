@@ -198,6 +198,7 @@ class Rand_Img_Pic(bpy.types.Panel,Bangumi_Panel):
     bl_idname = "N_PT_Rand_Img_Pic"
     bl_label = "图片"
     bl_parent_id = "N_PT_Rand_Img_Father"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout.box()

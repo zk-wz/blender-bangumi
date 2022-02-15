@@ -118,7 +118,12 @@ class ImgEditor_RandImg_Refresh(bpy.types.Operator):
             pic_path=os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "rand_img"), "rand_img.jpg")
             bpy.ops.image.open(filepath=pic_path)
 
+
         bpy.ops.image.reload()
+        try:
+            bpy.data.images["rand_img.jpg"].colorspace_settings.name = "Utility - sRGB - Texture"
+        except:
+            bpy.data.images["rand_img.jpg"].colorspace_settings.name = "sRGB"
 
         ui.imgapi_register()
         return {"FINISHED"}
@@ -154,8 +159,12 @@ class Switch_to_ImgEditor(bpy.types.Operator):
             pic_path=os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "rand_img"), "rand_img.jpg")
             bpy.ops.image.open(filepath=pic_path)
 
-        context.area.ui_type = "IMAGE_EDITOR"
+        # context.area.ui_type = "IMAGE_EDITOR"
         bpy.ops.image.reload()
+        try:
+            bpy.data.images["rand_img.jpg"].colorspace_settings.name = "Utility - sRGB - Texture"
+        except:
+            bpy.data.images["rand_img.jpg"].colorspace_settings.name = "sRGB"
         return {"FINISHED"}
 
 
