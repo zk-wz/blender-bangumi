@@ -118,8 +118,8 @@ class ImgEditor_RandImg_Refresh(bpy.types.Operator):
             pic_path=os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "rand_img"), "rand_img.jpg")
             bpy.ops.image.open(filepath=pic_path)
 
-
         bpy.ops.image.reload()
+
         try:
             bpy.data.images["rand_img.jpg"].colorspace_settings.name = "Utility - sRGB - Texture"
         except:
@@ -146,8 +146,8 @@ class Quick_Switch(bpy.types.Operator):
 
 class Switch_to_ImgEditor(bpy.types.Operator):
     bl_idname = "bangumi.switch_to_img_editor"
-    bl_label = "在图片编辑器中打开"
-    bl_description = "在图片编辑器中打开"
+    bl_label = "在图像编辑器中打开"
+    bl_description = "在图像编辑器中打开"
     bl_options = {"REGISTER"}
 
     @classmethod
@@ -159,8 +159,8 @@ class Switch_to_ImgEditor(bpy.types.Operator):
             pic_path=os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), "img"), "rand_img"), "rand_img.jpg")
             bpy.ops.image.open(filepath=pic_path)
 
-        # context.area.ui_type = "IMAGE_EDITOR"
         bpy.ops.image.reload()
+
         try:
             bpy.data.images["rand_img.jpg"].colorspace_settings.name = "Utility - sRGB - Texture"
         except:
@@ -245,6 +245,7 @@ class Open_bilibili_url(bpy.types.Operator):
 
     def execute(self, context):
         #实在不知道怎么往这里面传参了，不得已用上了这个离大谱的办法，知道咋办的兄弟救一下plz!!!!!!!!!!
+        #2022.2.16追加：才想起来可以用全局的RNA属性来着，我怕不是个傻子
         i=int(re.search(r"\+.*?_",self.flag).group()[1:-1])
         j=int(re.search(r"_.*?-",self.flag).group()[1:-1])
         webbrowser.open(url = bilibili_link_list[0][i][j], new = 0)

@@ -4,7 +4,7 @@ bl_info = {
     "author" : "掌控-物质",
     "description" : "能让你在blender更方便的追（mo）番（yu）",
     "blender" : (2, 80, 0),
-    "version" : (1, 3, 0),
+    "version" : (1, 3, 2),
     "location" : "",
     "warning" : "",
     "category" : "Bangumi"

@@ -134,4 +134,4 @@ dmypy.json
 *.jpg
 
 
-workspace.code-workspace
+*.code-workspace
