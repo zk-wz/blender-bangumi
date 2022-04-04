@@ -149,7 +149,7 @@ class bangumi_n_father_panel(bpy.types.Panel,Bangumi_Panel):
 
     def draw(self, context):
         layout = self.layout.box().column(align=True)
-        layout.operator("bangumi.nothing",text=context.scene.bangumi_property.yiyan,emboss=False)
+        layout.operator("bangumi.copy_text",text=context.scene.bangumi_property.yiyan,emboss=False)
         layout.operator("bangumi.nothing",text=context.scene.bangumi_property.yiyan_source,emboss=False)
 
 
@@ -267,7 +267,7 @@ class Yiyan(bpy.types.Panel,Bangumi_Panel):
 
     def draw(self, context):
         layout = self.layout.box().column(align=True)
-        layout.operator("bangumi.nothing",text=context.scene.bangumi_property.yiyan,emboss=False)
+        layout.operator("bangumi.copy_text",text=context.scene.bangumi_property.yiyan,emboss=False)
         layout.operator("bangumi.nothing",text=context.scene.bangumi_property.yiyan_source,emboss=False)
         
 

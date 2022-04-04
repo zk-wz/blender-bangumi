@@ -9,6 +9,23 @@ from . import ui
 from datetime import datetime
 from . import imgapi_spider
 import random
+import subprocess
+
+class Copy_text(bpy.types.Operator):
+    bl_idname = "bangumi.copy_text"
+    bl_label = "CopyText"
+    bl_description = "Copy Text"
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        subprocess.run("clip", universal_newlines=True, input=context.scene.bangumi_property.yiyan,encoding="gbk")
+        self.report({'INFO'}, "文本已复制")
+        return {"FINISHED"}
+
 
 class Nothing(bpy.types.Operator):
     bl_idname = "bangumi.nothing"

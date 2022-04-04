@@ -50,7 +50,8 @@ classes = [bangumi_props,
            Yiyan_Settings,
            Yiyan,
 
-           Nothing]
+           Nothing,
+           Copy_text]
 
 
 
