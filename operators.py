@@ -22,7 +22,14 @@ class Copy_text(bpy.types.Operator):
         return True
 
     def execute(self, context):
-        subprocess.run("clip", universal_newlines=True, input=context.scene.bangumi_property.yiyan,encoding="gbk")
+        try:
+            subprocess.run("clip", universal_newlines=True, input=context.scene.bangumi_property.yiyan,encoding="gbk")
+        except:
+            subprocess.run("pbcopy", universal_newlines=True, input=context.scene.bangumi_property.yiyan,encoding="gbk")
+        try:
+            subprocess.run("xclip", universal_newlines=True, input=context.scene.bangumi_property.yiyan,encoding="gbk")
+        except:
+            pass
         self.report({'INFO'}, "文本已复制")
         return {"FINISHED"}
 

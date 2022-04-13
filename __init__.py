@@ -16,7 +16,7 @@ from .operators import *
 from .utils import *
 from .bangumi_spider import *
 from .bilibili_spider import *
-# import bpy.utils.previews
+import bpy.utils.previews
 
 
 classes = [bangumi_props,
